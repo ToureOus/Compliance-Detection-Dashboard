@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{array}
+
+\title{Compliance Detection Dashboard -- Iteration 04}
+\author{Ousmane Toure}
+\date{November 10th, 2025}
+
+\begin{document}
+
+\maketitle
+\doublespacing
+
+\section{Dataset Description}
+
+This iteration extends the data foundation of the Compliance Detection Dashboard by combining three official datasets: the Electronic Code of Federal Regulations (ECFR), the MITRE Common Vulnerabilities and Exposures (CVE), and the National Vulnerability Database (NVD) from NIST. Each dataset is accessed through its public API and stored locally in structured JSON and CSV formats before ingestion.  
+
+The ECFR API exposes hierarchical legal text for federal regulatory titles and sections, while MITRE and NIST provide vulnerability data including CVE identifiers, CVSS scores, descriptions, and Common Platform Enumeration (CPE) references. Together, these sources form the foundation for automated correlation between policy language and technical vulnerabilities.  
+
+\noindent
+\textbf{Dataset Links:}
+\begin{itemize}
+    \item ECFR API: \texttt{https://www.ecfr.gov/developers/documentation/api/v1}
+    \item MITRE CVE API: \texttt{https://cveawg.mitre.org/api-docs/}
+    \item NIST NVD API: \texttt{https://nvd.nist.gov/developers/vulnerabilities}
+\end{itemize}
+
+These datasets were chosen because they are authoritative, frequently updated, and essential for any real-world compliance or assurance workflow. Their structure supports both automated parsing and incremental updates, aligning directly with the project goal of linking federal policy and cybersecurity intelligence.
+
+\section{Tools and Methodologies}
+
+Development continues in Python 3 with a focus on automated ETL. The core scripts (\texttt{extract\_parse.py} and \texttt{mitrecve\_download.py}) handle the retrieval and transformation of XML and JSON payloads into flattened CSV structures. SQLite is used locally to validate relational joins between CVE, ECFR, and CPE entries before ingestion into Splunk.  
+
+Daily ingestion is automated using a Linux \texttt{cron.daily} job, ensuring consistent data refresh without manual triggers. Splunk serves as the visualization and correlation platform, where parsed datasets populate a custom index named \texttt{sec\_intel}. The Splunk dashboard supports exploratory filtering by vendor, regulation, and vulnerability severity.  
+
+GitHub maintains version control across scripts, documentation, and transformation logic. This iteration refined branch management and cron logging to improve reproducibility.  
+
+\noindent
+\textbf{GitHub Repository:} \texttt{https://github.com/ToureOus/Compliance-Detection-Dashboard}
+
+\section{Preliminary Timeline}
+
+\begin{center}
+\begin{tabular}{|m{3cm}|m{8cm}|}
+\hline
+\textbf{Week} & \textbf{Milestone and Deliverables} \\ \hline
+Week 9 & Refined ECFR and CVE schema mapping; produced validated merged dataset. \\ \hline
+Week 10 & Completed cross-reference logic between CPE and ECFR citations; documented schema joins. \\ \hline
+Week 11 & Integrated automated daily ingestion through cron; verified data integrity and log retention. \\ \hline
+Week 12 & Developed dashboard visuals for compliance–vulnerability correlation. \\ \hline
+Week 13 & Final documentation, Overleaf report submission, and full GitHub synchronization. \\ \hline
+\end{tabular}
+\end{center}
+
+This schedule reflects the remaining stages of the semester and tracks both technical and documentation milestones through final submission.
+
+\section{Team Member Contributions}
+
+This is an independent project managed and executed solely by the author. All scripting, automation, database testing, and visualization design are developed by Ousmane Toure.  
+
+Work this iteration focused on completing ingestion automation, refining schema consistency, and improving traceability through GitHub commits. Each script update is logged, tested, and validated against sample CVE–ECFR intersections before release. Future adjustments will focus on enhancing dashboard interactivity and scaling ingestion to additional ECFR titles.
+
+\section{Progress and Next Steps}
+
+\textbf{Progress to Date:}  
+The datasets from ECFR, MITRE CVE, and NVD have been collected and reviewed. The focus so far has been on analyzing the structure and unique attributes of each dataset to understand how they can be cross-referenced effectively. Initial exploration compared key identifiers such as CVE IDs, CPE strings, and regulatory section numbers to identify potential mapping relationships. This phase helped clarify how the data sources differ in structure and terminology, laying the groundwork for the integration and schema design work that follows.  
+
+\textbf{Ongoing Challenges:}  
+Some ECFR entries lack consistent formatting, requiring additional parsing logic. The CVE feeds occasionally exceed API rate limits during batch ingestion, so this will be mitigated through staggered calls and caching.  
+
+\textbf{Next Steps:}  
+\begin{itemize}
+    \item Extend dashboard filters for agency-specific views.
+    \item Add validation scripts to track failed cron executions.
+    \item Finalize Overleaf report and GitHub repository for project submission.
+\end{itemize}
+
+The project remains fully aligned with the DS5110 objectives of building reproducible, automated data systems and demonstrates a clear progression toward unifying regulatory and vulnerability datasets within a structured analytical framework.
+
+\end{document}
